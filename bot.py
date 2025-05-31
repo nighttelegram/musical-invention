@@ -19,14 +19,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = [[InlineKeyboardButton("Prosseguir", callback_data="prosseguir")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await query.edit_message_text(
-            "Olá, tudo bem? 
-
-
-Vou te explicar como funciona o nosso aplicativo:
-
-O APP Espião, é um aplicativo de monitoramento passo a passo para você que suspeita que o seu amor está te traindo, ou para você que já sabe que está sendo traído (a) e não tem provas, também serve para monitorar o celular dos seus filhos.
-
-Com o App você poderá Ter acesso ao WhatsApp do seu parceiro em tempo Real sem que ele saiba, Apenas Colocando o Numero Dele no App Espião Sem Precisar ter o celular do seu Parceiro.",
+            "Olá, tudo bem? Vou te explicar como funciona o nosso aplicativoO APP Espião, é um aplicativo de monitoramento passo a passo para você que suspeita que o seu amor está te traindo, ou para você que já sabe que está sendo traído (a) e não tem provas, também serve para monitorar o celular dos seus filhos.Com o App você poderá Ter acesso ao WhatsApp do seu parceiro em tempo Real sem que ele saiba, Apenas Colocando o Numero Dele no App Espião Sem Precisar ter o celular do seu Parceiro.",
             reply_markup=reply_markup
         )
     elif query.data == "prosseguir":
