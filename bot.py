@@ -6,7 +6,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[InlineKeyboardButton("Sim", callback_data="sim")]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        "Olá seja bem vindo(a) ao Espia do Amor deseja prosseguir",
+        "Olá seja bem vindo(a) ao Espião do Amor deseja prosseguir",
         reply_markup=reply_markup
     )
 
