@@ -101,7 +101,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # === Inicializa o bot ===
 def main():
-    app = Application.builder().token("COLOQUE_SEU_TOKEN_AQUI").build()
+    app = Application.builder().token("7892539859:AAHR5lDu0HkftDDQIzRLBNzUXiJSlKQLdqw").build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
     print("Bot rodando... Pressione Ctrl+C para parar.")
