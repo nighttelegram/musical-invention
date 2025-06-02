@@ -1,17 +1,7 @@
 import os
-from telegram import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Update,
-    InputMediaPhoto
-)
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, InputMediaPhoto
 from telegram.constants import ChatAction
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    CallbackQueryHandler,
-    ContextTypes
-)
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # === CONTADOR DE USUÁRIOS QUE INICIARAM O BOT ===
 def ler_contador():
@@ -55,16 +45,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
 
-    with open("ftbot.jpeg", "rb") as photo:  # Imagem no mesmo diretório
+    with open("ftbot.jpeg", "rb") as photo:
         await update.message.reply_photo(
             photo=photo,
-            caption=(
-                "Olá, tudo bem? Vou te explicar como funciona o nosso aplicativo: O APP Espião é um aplicativo de "
-                "monitoramento passo a passo para você que suspeita que o seu amor está te traindo, ou para você que "
-                "já sabe que está sendo traído(a) e não tem provas. Também serve para monitorar o celular dos seus filhos. "
-                "Com o App você poderá ter acesso ao WhatsApp do seu parceiro em tempo real sem que ele saiba, apenas "
-                "colocando o número dele no App Espião, sem precisar ter o celular do seu parceiro."
-            ),
+            caption="Olá, tudo bem? Vou te explicar como funciona o nosso aplicativo: O APP Espião é um aplicativo de monitoramento passo a passo para você que suspeita que o seu amor está te traindo, ou para você que já sabe que está sendo traído(a) e não tem provas. Também serve para monitorar o celular dos seus filhos. Com o App você poderá ter acesso ao WhatsApp do seu parceiro em tempo real sem que ele saiba, apenas colocando o número dele no App Espião, sem precisar ter o celular do seu parceiro.",
             reply_markup=reply_markup
         )
 
@@ -101,11 +85,17 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # === Inicializa o bot ===
 def main():
-    app = Application.builder().token("7892539859:AAHR5lDu0HkftDDQIzRLBNzUXiJSlKQLdqw").build()
+    import asyncio
+    import logging
+    logging.basicConfig(level=logging.INFO)
+
+    TOKEN = os.environ.get("7892539859:AAHR5lDu0HkftDDQIzRLBNzUXiJSlKQLdqw")
+    app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
-    print("Bot rodando... Pressione Ctrl+C para parar.")
+    print("Bot rodando...")
     app.run_polling()
 
 if __name__ == "__main__":
     main()
+
