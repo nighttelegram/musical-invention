@@ -1,94 +1,109 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+import os
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Update,
+    InputMediaPhoto
+)
+from telegram.constants import ChatAction
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    CallbackQueryHandler,
+    ContextTypes
+)
 
-# Comando /start
+# === CONTADOR DE USUÁRIOS QUE INICIARAM O BOT ===
+def ler_contador():
+    if not os.path.exists("contador.txt"):
+        with open("contador.txt", "w") as f:
+            f.write("0")
+    with open("contador.txt", "r") as f:
+        return int(f.read())
+
+def incrementar_contador():
+    contador = ler_contador() + 1
+    with open("contador.txt", "w") as f:
+        f.write(str(contador))
+    return contador
+
+# === CONTADOR DE CLIQUES NO BOTÃO QUERO MEU ACESSO ===
+def ler_contador_acessos():
+    if not os.path.exists("contador_acessos.txt"):
+        with open("contador_acessos.txt", "w") as f:
+            f.write("0")
+    with open("contador_acessos.txt", "r") as f:
+        return int(f.read())
+
+def incrementar_contador_acessos():
+    contador = ler_contador_acessos() + 1
+    with open("contador_acessos.txt", "w") as f:
+        f.write(str(contador))
+    return contador
+
+# === /start ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [[InlineKeyboardButton("Sim", callback_data="sim")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
-        "Olá seja bem vindo(a) ao Espião do Amor deseja prosseguir",
-        reply_markup=reply_markup
-    )
+    contador = incrementar_contador()
+    user = update.effective_user
+    nome = user.full_name
+    username = user.username if user.username else "sem @"
 
-# Lida com os botões
+    print(f"[ACESSO] {nome} (@{username}) iniciou o bot. Total de acessos: {contador}")
+
+    keyboard = [[InlineKeyboardButton("QUERO ENTENDER MELHOR", callback_data="entender")]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+
+    with open("ftbot.jpeg", "rb") as photo:  # Imagem no mesmo diretório
+        await update.message.reply_photo(
+            photo=photo,
+            caption=(
+                "Olá, tudo bem? Vou te explicar como funciona o nosso aplicativo: O APP Espião é um aplicativo de "
+                "monitoramento passo a passo para você que suspeita que o seu amor está te traindo, ou para você que "
+                "já sabe que está sendo traído(a) e não tem provas. Também serve para monitorar o celular dos seus filhos. "
+                "Com o App você poderá ter acesso ao WhatsApp do seu parceiro em tempo real sem que ele saiba, apenas "
+                "colocando o número dele no App Espião, sem precisar ter o celular do seu parceiro."
+            ),
+            reply_markup=reply_markup
+        )
+
+# === Botões ===
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    if query.data == "sim":
-        keyboard = [[InlineKeyboardButton("Prosseguir", callback_data="prosseguir")]]
+    await context.bot.send_chat_action(chat_id=query.message.chat_id, action=ChatAction.TYPING)
+
+    if query.data == "entender":
+        keyboard = [[InlineKeyboardButton("QUERO MEU ACESSO", callback_data="acesso")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.edit_message_text(
-            "Olá, tudo bem? Vou te explicar como funciona o nosso aplicativoO APP Espião, é um aplicativo de monitoramento passo a passo para você que suspeita que o seu amor está te traindo, ou para você que já sabe que está sendo traído (a) e não tem provas, também serve para monitorar o celular dos seus filhos.Com o App você poderá Ter acesso ao WhatsApp do seu parceiro em tempo Real sem que ele saiba, Apenas Colocando o Numero Dele no App Espião Sem Precisar ter o celular do seu Parceiro.",
+
+        await query.edit_message_caption(
+            caption="O espião do amor usa uma técnica poderosa de webhacking capaz de invadir até os dispositivos mais seguros e protegidos, sendo a melhor ferramenta disponível no mercado.",
             reply_markup=reply_markup
         )
-    elif query.data == "prosseguir":
-        await query.edit_message_text(
-            "✅ Você está quase lá! Use o comando /nu e o numero desejado para clonar a conversac."
-        )
 
-# Comando /nu
-async def nu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🔒 Para revelar a conversa, pague a taxa de R$60,00."
-    )
+    elif query.data == "acesso":
+        contador_acessos = incrementar_contador_acessos()
+        print(f"[ACESSO] Botão QUERO MEU ACESSO clicado. Total: {contador_acessos}")
 
-# Inicializa o bot
+        with open("ftbot.jpeg", "rb") as photo:
+            await query.edit_message_media(
+                media=InputMediaPhoto(
+                    media=photo,
+                    caption="✅ Você está quase lá!"
+                ),
+                reply_markup=InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("quero meu acesso", url="https://t.me/Padrinho71")]]
+                )
+            )
+
+# === Inicializa o bot ===
 def main():
-    app = Application.builder().token("7826889737:AAEXfwuvy7exTIPh4v8lqxnrdWyM_NGgpOc").build()
-
+    app = Application.builder().token("COLOQUE_SEU_TOKEN_AQUI").build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
-    app.add_handler(CommandHandler("nu", nu))
-
-    print("Bot rodando... Pressione Ctrl+C para parar.")
-    app.run_polling()
-
-if __name__ == "__main__":
-    main()
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
-
-# Comando /start
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [[InlineKeyboardButton("Sim", callback_data="sim")]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
-        "Você deseja saber o que é o Espião do Amor?",
-        reply_markup=reply_markup
-    )
-
-# Lida com os botões
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    if query.data == "sim":
-        keyboard = [[InlineKeyboardButton("Prosseguir", callback_data="prosseguir")]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.edit_message_text(
-            "🕵️‍♂️ O Espião do Amor é uma ferramenta secreta que te ajuda a descobrir se alguém gosta de você 💘",
-            reply_markup=reply_markup
-        )
-    elif query.data == "prosseguir":
-        await query.edit_message_text(
-            "✅ Você está quase lá! Use o comando /nu para continuar."
-        )
-
-# Comando /nu
-async def nu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🔒 Para revelar a conversa, pague a taxa de **R$60,00**."
-    )
-
-# Inicializa o bot
-def main():
-    app = Application.builder().token("7826889737:AAEXfwuvy7exTIPh4v8lqxnrdWyM_NGgpOc").build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button))
-    app.add_handler(CommandHandler("nu", nu))
-
     print("Bot rodando... Pressione Ctrl+C para parar.")
     app.run_polling()
 
